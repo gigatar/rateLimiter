@@ -21,6 +21,21 @@ type Config struct {
 	MaxIdleTime time.Duration
 }
 
+func (c *Config) Validate() {
+	if c.RequestsPerSecond <= 0 {
+		c.RequestsPerSecond = 1
+	}
+	if c.Burst <= 0 {
+		c.Burst = 5
+	}
+	if c.CleanupInterval <= 0 {
+		c.CleanupInterval = time.Minute
+	}
+	if c.MaxIdleTime <= 0 {
+		c.MaxIdleTime = 3 * time.Minute
+	}
+}
+
 // DefaultConfig returns a Config with sensible defaults
 func DefaultConfig() *Config {
 	return &Config{
@@ -47,6 +62,7 @@ func Initialize(cfg *Config) {
 	if cfg == nil {
 		cfg = DefaultConfig()
 	}
+	cfg.Validate()
 	config = cfg
 	go cleanupVisitors()
 }
