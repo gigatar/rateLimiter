@@ -1,6 +1,7 @@
 package ratelimiter
 
 import (
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -67,6 +68,7 @@ func getVisitor(ip string) *rate.Limiter {
 func cleanupVisitors() {
 	for {
 		time.Sleep(config.CleanupInterval)
+		fmt.Println("Cleaning up visitors")
 		mx.Lock()
 		for ip, v := range visitors {
 			if time.Since(v.lastSeen) > config.MaxIdleTime {
